@@ -8,9 +8,7 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class EchoServer {
-
     private final int port;
-
     private EchoServer(int port) {
         this.port = port;
     }
@@ -32,10 +30,9 @@ public class EchoServer {
 
     private void handle(Socket socket) throws IOException {
         InputStreamReader isr = new InputStreamReader(socket.getInputStream(), "UTF-8");
-        String message = "";
         try (Scanner sc = new Scanner(isr); PrintWriter writer = new PrintWriter(socket.getOutputStream())) {
             while (true) {
-                message = sc.nextLine().strip();
+                String message = sc.nextLine().strip();
                 System.out.printf("Got from client: %s%n", message);
                 if ("bye".equalsIgnoreCase(message)) {
                     System.out.printf("Bye bye!%n");

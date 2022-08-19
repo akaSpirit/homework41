@@ -21,7 +21,6 @@ public class EchoServer {
 
     public void run() {
         try (var server = new ServerSocket(port)) {
-            // обработка подключения
             try (var clientSocket = server.accept()) {
                 handle(clientSocket);
             }
@@ -32,11 +31,9 @@ public class EchoServer {
     }
 
     private void handle(Socket socket) throws IOException {
-        // логика обработки
-
         InputStreamReader isr = new InputStreamReader(socket.getInputStream(), "UTF-8");
         String message = "";
-        try (Scanner sc = new Scanner(isr)) {
+        try (Scanner sc = new Scanner(isr); PrintWriter writer = new PrintWriter(socket.getOutputStream())) {
             while (true) {
                 message = sc.nextLine().strip();
                 System.out.printf("Got from client: %s%n", message);
@@ -44,21 +41,13 @@ public class EchoServer {
                     System.out.printf("Bye bye!%n");
                     return;
                 }
-
-                try (PrintWriter writer = new PrintWriter(socket.getOutputStream())) {
-//                    while (true) {
-                    writer.write(reverseString(message));
-                    writer.write(System.lineSeparator());
-                    writer.flush();
-//                        return;
-//                    }
-                }
+                writer.write(reverseString(message));
+                writer.write(System.lineSeparator());
+                writer.flush();
             }
         } catch (NoSuchElementException e) {
             System.out.println("Client dropped the connection!");
         }
-
-
     }
 
     public static String reverseString(String str) {

@@ -20,15 +20,14 @@ public class EchoClient {
         return new EchoClient(localhost, port);
     }
 
-    // another methods
-
     public void run() {
         System.out.printf("Напиши 'bye' чтобы выйти%n%n%n");
 
         try (Socket socket = new Socket(host, port)) {
             Scanner scanner = new Scanner(System.in, "UTF-8");
             InputStreamReader isr = new InputStreamReader(socket.getInputStream(), "UTF-8");
-            try (PrintWriter writer = new PrintWriter(socket.getOutputStream())) {
+
+            try (PrintWriter writer = new PrintWriter(socket.getOutputStream()); Scanner sc = new Scanner(isr)) {
                 while (true) {
                     String message = scanner.nextLine();
                     writer.write(message);
@@ -37,14 +36,8 @@ public class EchoClient {
                     if ("bye".equalsIgnoreCase(message)) {
                         return;
                     }
-
-
-                    try (Scanner sc = new Scanner(isr)) {
-//                        while (true) {
-                        String msg = sc.nextLine().strip();
-                        System.out.printf("Got from server: %s%n", msg);
-//                        }
-                    }
+                    String msg = sc.nextLine().strip();
+                    System.out.printf("Got from server: %s%n", msg);
                 }
             }
         } catch (NoSuchElementException ex) {
